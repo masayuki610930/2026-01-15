@@ -20,10 +20,6 @@
         <p class="eyebrow">Game Master</p>
         <h1>番号抽選ページ</h1>
       </div>
-      <a class="hero__qr" href="index.html">
-        <p class="hint hint--small">参加者画面</p>
-        <img src="qr-participants.png" alt="参加者ページQRコード" />
-      </a>
     </section>
 
     <article class="panel panel--single" id="hostPanel">
@@ -41,7 +37,7 @@
               <button type="button" id="randomReveal" class="ghost host__random">ランダムでめくる</button>
             </div>
           </div>
-          <div id="cardHand" class="card-hand">
+          <div id="cardHand" class="card-hand card-hand--single">
             <button type="button" class="draw-card" data-card="0">
               <span class="card__inner">
                 <span class="card__back">?</span>
@@ -74,6 +70,11 @@
             </button>
           </div>
         </div>
+
+        <a class="host__qr-panel" href="index.html">
+          <p class="hint hint--small">参加者画面</p>
+          <img src="qr-participants.png" alt="参加者ページQRコード" />
+        </a>
       </div>
 
         <div class="history">
