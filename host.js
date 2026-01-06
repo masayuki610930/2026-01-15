@@ -6,14 +6,31 @@
   const historyGridSorted = document.getElementById("historyGridSorted");
   const historyCountEl = document.getElementById("historyCount");
   const cardButtons = Array.from(document.querySelectorAll(".draw-card"));
+  const prizeButtons = Array.from(document.querySelectorAll(".prize-card"));
   const holdState = new Map();
   const randomButton = document.getElementById("randomReveal");
   const hostTimestamp = document.getElementById("hostTimestamp");
+  const prizeModal = document.getElementById("prizeModal");
+  const openPrizeModalBtn = document.getElementById("openPrizeModal");
+  const closePrizeModalBtn = document.getElementById("closePrizeModal");
+  const savePrizeModalBtn = document.getElementById("savePrizeModal");
+  const remoteCountInput = document.getElementById("remoteCountInput");
+  const prizeInputs = Array.from(document.querySelectorAll("[data-prize-input]"));
 
   let deck = [];
   let history = [];
   let isRevealing = false;
   let cardNumbers = [];
+  let remoteCount = 0;
+  const prizeMap = {
+    A: "Aさん賞",
+    B: "Bさん賞",
+    C: "Cさん賞",
+    D: "Dさん賞",
+    E: "Eさん賞",
+    F: "Fさん賞",
+    G: "Gさん賞",
+  };
 
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i -= 1) {
@@ -104,6 +121,12 @@
     if (randomButton) {
       randomButton.addEventListener("click", revealRandomCard);
     }
+    prizeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => revealPrize(btn));
+    });
+    if (openPrizeModalBtn) openPrizeModalBtn.addEventListener("click", showPrizeModal);
+    if (closePrizeModalBtn) closePrizeModalBtn.addEventListener("click", hidePrizeModal);
+    if (savePrizeModalBtn) savePrizeModalBtn.addEventListener("click", savePrizeSettings);
   }
 
   function resetCards() {
@@ -227,6 +250,7 @@
     bindEvents();
     initDeck();
     setHostTimestamp();
+    setPrizeLabels();
   }
 
   init();
@@ -241,5 +265,55 @@
     const mi = String(now.getMinutes()).padStart(2, "0");
     const ss = String(now.getSeconds()).padStart(2, "0");
     hostTimestamp.textContent = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  }
+
+  function revealPrize(button) {
+    if (button.classList.contains("revealed")) return;
+    const key = button.dataset.prize;
+    const text = prizeMap[key] || `${key}賞`;
+    button.classList.add("revealed");
+    const inner = button.querySelector(".prize__inner");
+    if (inner) inner.textContent = text;
+  }
+
+  function setPrizeLabels() {
+    prizeButtons.forEach((btn, idx) => {
+      const key = btn.dataset.prize;
+      const inner = btn.querySelector(".prize__inner");
+      if (inner) inner.textContent = prizeMap[key] || `${key}賞`;
+      btn.classList.remove("prize-card--remote");
+      if (idx < remoteCount) {
+        btn.classList.add("prize-card--remote");
+      }
+      btn.classList.remove("revealed");
+    });
+  }
+
+  function showPrizeModal() {
+    if (!prizeModal) return;
+    prizeModal.classList.remove("hidden");
+    if (remoteCountInput) remoteCountInput.value = remoteCount;
+    prizeInputs.forEach((input) => {
+      const key = input.dataset.prizeInput;
+      if (key && prizeMap[key]) input.value = prizeMap[key];
+    });
+  }
+
+  function hidePrizeModal() {
+    if (!prizeModal) return;
+    prizeModal.classList.add("hidden");
+  }
+
+  function savePrizeSettings() {
+    const remoteVal = remoteCountInput ? Number(remoteCountInput.value) : 0;
+    remoteCount = Number.isInteger(remoteVal) ? Math.max(0, Math.min(remoteVal, prizeButtons.length)) : 0;
+    prizeInputs.forEach((input) => {
+      const key = input.dataset.prizeInput;
+      if (!key) return;
+      const val = input.value.trim();
+      if (val) prizeMap[key] = val;
+    });
+    setPrizeLabels();
+    hidePrizeModal();
   }
 })();

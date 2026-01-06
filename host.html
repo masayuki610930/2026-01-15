@@ -81,11 +81,11 @@
         <p id="hostTimestamp" class="host__timestamp"></p>
       </div>
 
-        <div class="history">
-          <div class="history__header">
-            <p class="eyebrow">これまでに出た番号</p>
-            <span id="historyCount" class="history__count">0 個</span>
-          </div>
+      <div class="history">
+        <div class="history__header">
+          <p class="eyebrow">これまでに出た番号</p>
+          <span id="historyCount" class="history__count">0 個</span>
+        </div>
         <div class="history__columns history__columns--stacked">
           <div class="history__block">
             <p class="history__title">出た順</p>
@@ -97,8 +97,55 @@
           </div>
         </div>
       </div>
+
+      <div class="prize">
+        <div class="prize__header">
+          <div>
+            <p class="eyebrow">Prize</p>
+            <h3>景品ゾーン</h3>
+            <p class="hint">A〜G賞をクリックでめくる。とりあえず Aさん賞〜Gさん賞を表示。</p>
+          </div>
+          <button type="button" id="openPrizeModal" class="ghost host__random">賞を設定</button>
+        </div>
+        <div class="prize__grid">
+          <button class="prize-card" data-prize="A"><span class="prize__inner">A賞</span></button>
+          <button class="prize-card" data-prize="B"><span class="prize__inner">B賞</span></button>
+          <button class="prize-card" data-prize="C"><span class="prize__inner">C賞</span></button>
+          <button class="prize-card" data-prize="D"><span class="prize__inner">D賞</span></button>
+          <button class="prize-card" data-prize="E"><span class="prize__inner">E賞</span></button>
+          <button class="prize-card" data-prize="F"><span class="prize__inner">F賞</span></button>
+          <button class="prize-card" data-prize="G"><span class="prize__inner">G賞</span></button>
+        </div>
+      </div>
     </article>
   </main>
+
+  <div id="prizeModal" class="modal hidden">
+    <div class="modal__body">
+      <div class="modal__header">
+        <h4>賞の設定</h4>
+        <button type="button" id="closePrizeModal" class="ghost modal__close">×</button>
+      </div>
+      <div class="modal__content">
+        <label class="modal__label">
+          リモート用にする先頭枚数 (0-7)
+          <input type="number" id="remoteCountInput" min="0" max="7" value="0" />
+        </label>
+        <div class="modal__grid">
+          <label> A賞: <input type="text" data-prize-input="A" value="Aさん賞" /> </label>
+          <label> B賞: <input type="text" data-prize-input="B" value="Bさん賞" /> </label>
+          <label> C賞: <input type="text" data-prize-input="C" value="Cさん賞" /> </label>
+          <label> D賞: <input type="text" data-prize-input="D" value="Dさん賞" /> </label>
+          <label> E賞: <input type="text" data-prize-input="E" value="Eさん賞" /> </label>
+          <label> F賞: <input type="text" data-prize-input="F" value="Fさん賞" /> </label>
+          <label> G賞: <input type="text" data-prize-input="G" value="Gさん賞" /> </label>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" id="savePrizeModal" class="primary">保存</button>
+      </div>
+    </div>
+  </div>
 
   <script src="host.js"></script>
 </body>
