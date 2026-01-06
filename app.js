@@ -164,6 +164,8 @@
         ? `次に ${picks} が出たらビンゴ！`
         : "次の番号で一気に揃うかも。目が離せない！";
       progressDetail.textContent = `${pickCommentary("reach")} ${progressDetail.textContent}`;
+      lastBingoCount = 0;
+      hideBingoOverlay();
     } else {
       if (toReachNumbers.length) {
         progressHeadline.textContent = "もうすぐリーチ。";
