@@ -4,12 +4,15 @@
   const boardGrid = document.getElementById("boardGrid");
   const linesChip = document.getElementById("linesComplete");
   const boardHint = document.getElementById("boardHint");
+  const bingoOverlay = document.getElementById("bingoOverlay");
   const newBoardButton = document.getElementById("newBoard");
   const newBoardHero = document.getElementById("newBoardHero");
   const progressHeadline = document.getElementById("progressHeadline");
   const progressDetail = document.getElementById("progressDetail");
 
   let boardState = [];
+  let bingoOverlayTimer = null;
+  let lastBingoCount = 0;
 
   const commentary = {
     bingo: [
@@ -82,6 +85,8 @@
     }
 
     renderBoard();
+    lastBingoCount = 0;
+    hideBingoOverlay();
     updateLines();
   }
 
@@ -147,6 +152,10 @@
           ? `さらに ${reachCount} 本がリーチ中。次の番号で連鎖ビンゴの予感。`
           : "おめでとう！続けてラインを狙おう。";
       progressDetail.textContent = `${pickCommentary("bingo")} ${progressDetail.textContent}`;
+      if (bingoCount > lastBingoCount) {
+        showBingoOverlay();
+      }
+      lastBingoCount = bingoCount;
     } else if (reachCount > 0) {
       progressHeadline.textContent = `リーチ ${reachCount} ライン！`;
       progressHeadline.classList.add("pulse");
@@ -168,9 +177,12 @@
         progressDetail.textContent = "出た番号をタップして進行してください。";
         progressDetail.textContent = `${pickCommentary("near")} ${progressDetail.textContent}`;
       }
+      lastBingoCount = 0;
+      hideBingoOverlay();
     }
 
     boardHint.textContent = "";
+    highlightReachCells(reachNumbers);
   }
 
   function pickCommentary(type) {
@@ -179,7 +191,35 @@
     return list[index];
   }
 
+  function highlightReachCells(reachNumbers) {
+    if (!boardGrid) return;
+    const reachSet = new Set(reachNumbers);
+    Array.from(boardGrid.children).forEach((node, idx) => {
+      node.classList.remove("reach");
+      const val = boardState[idx]?.value;
+      if (val !== undefined && val !== "FREE" && reachSet.has(val)) {
+        node.classList.add("reach");
+      }
+    });
+  }
+
+  function showBingoOverlay() {
+    if (!bingoOverlay) return;
+    clearTimeout(bingoOverlayTimer);
+    bingoOverlay.classList.remove("hidden");
+    bingoOverlayTimer = setTimeout(() => {
+      hideBingoOverlay();
+    }, 2000);
+  }
+
+  function hideBingoOverlay() {
+    if (!bingoOverlay) return;
+    clearTimeout(bingoOverlayTimer);
+    bingoOverlay.classList.add("hidden");
+  }
+
   function bindEvents() {
+    if (bingoOverlay) bingoOverlay.addEventListener("click", hideBingoOverlay);
   }
 
   function init() {

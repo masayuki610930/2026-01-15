@@ -535,6 +535,13 @@ button.ghost {
   color: #1f0b2c;
 }
 
+.board__cell.reach {
+  background: linear-gradient(135deg, rgba(255, 124, 197, 0.12), rgba(155, 100, 255, 0.12));
+  border-color: rgba(211, 107, 255, 0.7);
+  animation: blink 1.6s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(211, 107, 255, 0.16);
+}
+
 .board__cell.free {
   background: linear-gradient(135deg, rgba(255, 124, 197, 0.16), rgba(155, 100, 255, 0.16));
   border-style: dashed;
@@ -572,6 +579,34 @@ button.ghost {
   animation: burst 0.9s ease-in-out 1;
 }
 
+.bingo-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 124, 197, 0.25), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(155, 100, 255, 0.25), transparent 45%),
+    radial-gradient(circle at 50% 70%, rgba(255, 157, 127, 0.25), transparent 45%),
+    rgba(10, 2, 20, 0.6);
+  color: #fff;
+  font-size: clamp(48px, 10vw, 120px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+  animation: overlay-pop 0.4s ease;
+  text-shadow:
+    0 0 24px rgba(255, 124, 197, 0.8),
+    0 0 12px rgba(155, 100, 255, 0.8);
+  overflow: hidden;
+}
+
+.bingo-overlay.hidden {
+  display: none;
+}
+
 @keyframes pulse {
   0% { text-shadow: 0 0 6px rgba(255, 124, 197, 0.6); }
   50% { text-shadow: 0 0 16px rgba(211, 107, 255, 0.9); }
@@ -584,6 +619,39 @@ button.ghost {
   100% { transform: scale(1); text-shadow: 0 0 6px rgba(255, 124, 197, 0.6); }
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes overlay-pop {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.bingo-overlay::before {
+  content: "✨";
+  position: absolute;
+  font-size: clamp(32px, 8vw, 64px);
+  top: 16%;
+  left: 18%;
+  color: rgba(255, 255, 255, 0.8);
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.bingo-overlay::after {
+  content: "🎉";
+  position: absolute;
+  font-size: clamp(32px, 8vw, 64px);
+  bottom: 14%;
+  right: 14%;
+  animation: sparkle 1.8s ease-in-out infinite reverse;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+  50% { transform: scale(1.15) rotate(8deg); opacity: 1; }
+}
 .hero + .panels {
   margin-top: 24px;
 }
