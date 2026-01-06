@@ -85,6 +85,7 @@
     }
 
     renderBoard();
+    setTimestamp();
     lastBingoCount = 0;
     hideBingoOverlay();
     updateLines();
@@ -227,9 +228,23 @@
   function init() {
     if (!boardGrid) return;
     if (boardHint) boardHint.style.display = "none";
+    setTimestamp();
     bindEvents();
     generateBoard();
   }
 
   init();
+
+  function setTimestamp() {
+    const el = document.getElementById("boardTimestamp");
+    if (!el) return;
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mi = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+    el.textContent = `生成: ${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  }
 })();

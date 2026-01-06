@@ -8,6 +8,7 @@
   const cardButtons = Array.from(document.querySelectorAll(".draw-card"));
   const holdState = new Map();
   const randomButton = document.getElementById("randomReveal");
+  const hostTimestamp = document.getElementById("hostTimestamp");
 
   let deck = [];
   let history = [];
@@ -30,6 +31,7 @@
     historyGridOrder.innerHTML = "";
     historyGridSorted.innerHTML = "";
     historyCountEl.textContent = "0 個";
+    setHostTimestamp();
   }
 
   function revealFromDeck(card) {
@@ -224,7 +226,20 @@
     if (!cardButtons.length) return;
     bindEvents();
     initDeck();
+    setHostTimestamp();
   }
 
   init();
+
+  function setHostTimestamp() {
+    if (!hostTimestamp) return;
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mi = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+    hostTimestamp.textContent = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  }
 })();
