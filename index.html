@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Control & Player</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand__dot"></div>
+      <span>Bingo Play</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero hero--solo">
+      <div class="hero__content">
+        <p class="eyebrow">For Players</p>
+        <h1>ビンゴカード</h1>
+      </div>
+    </section>
+
+    <article class="panel panel--single" id="playerPanel">
+
+
+      <div class="board">
+        <div class="board__header">
+          <span class="eyebrow">カード</span>
+          <span id="linesComplete" class="chip chip--soft">ビンゴ 0 / リーチ 0</span>
+        </div>
+        <div id="boardGrid" class="board__grid"></div>
+        <div class="progress">
+          <div id="progressHeadline" class="progress__headline">まだ序盤。次の数字に期待！</div>
+          <p id="progressDetail" class="progress__detail">最短であと3マスでリーチ、5マスでビンゴ。</p>
+        </div>
+        <p id="boardHint" class="board__hint">中央はFREEで最初からチェック済みです。</p>
+      </div>
+    </article>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
