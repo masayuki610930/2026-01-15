@@ -27,6 +27,7 @@
   let cardNumbers = [];
   let remoteCount = 0;
   let totalPrizes = prizeButtons.length;
+  let hostTimestampSet = false;
   const PRIZE_KEYS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const prizeMap = PRIZE_KEYS.reduce((acc, key) => {
     acc[key] = `${key}賞`;
@@ -49,7 +50,8 @@
     historyGridOrder.innerHTML = "";
     historyGridSorted.innerHTML = "";
     historyCountEl.textContent = "0 個";
-    setHostTimestamp();
+    hostTimestampSet = false;
+    if (hostTimestamp) hostTimestamp.textContent = "";
   }
 
   function revealFromDeck(card) {
@@ -69,6 +71,11 @@
     resetCards();
     const number = cardNumbers[idx];
     showNumber(card, number, idx);
+
+    if (!hostTimestampSet) {
+      setHostTimestamp();
+      hostTimestampSet = true;
+    }
   }
 
   function renderHistory() {
