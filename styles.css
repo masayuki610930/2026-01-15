@@ -170,6 +170,16 @@ body {
   margin: 4px 0 4px;
 }
 
+.prize__actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.prize__actions .prize__settings {
+  min-width: 120px;
+}
+
 .prize__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -195,14 +205,20 @@ body {
 }
 
 .prize-card.revealed {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(211, 107, 255, 0.28));
-  box-shadow: 0 3px 14px rgba(112, 50, 130, 0.18);
-  color: #2a0a3c;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(211, 107, 255, 0.38));
+  box-shadow: 0 6px 18px rgba(112, 50, 130, 0.28), 0 0 0 2px rgba(211, 107, 255, 0.4);
+  color: #220622;
+  font-size: 16px;
+  transform: translateY(-2px);
 }
 
 .prize-card.prize-card--remote {
   border: 1px solid rgba(255, 124, 197, 0.7);
   background: linear-gradient(135deg, rgba(255, 124, 197, 0.3), rgba(155, 100, 255, 0.2));
+}
+
+.prize-card.prize-card--hidden {
+  display: none;
 }
 
 .modal {
@@ -251,6 +267,10 @@ body {
   gap: 8px;
 }
 
+.modal__grid--controls {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
 .modal__label {
   display: flex;
   flex-direction: column;
@@ -276,6 +296,29 @@ body {
 
 .modal__close {
   padding: 8px 10px;
+}
+
+.modal__textblock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal__textblock textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.75);
+  font-family: "Space Grotesk", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  resize: vertical;
+}
+
+.modal__textactions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 .hero__content h1 {
   margin: 8px 0 12px;

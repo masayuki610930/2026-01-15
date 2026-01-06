@@ -14,23 +14,24 @@
   const openPrizeModalBtn = document.getElementById("openPrizeModal");
   const closePrizeModalBtn = document.getElementById("closePrizeModal");
   const savePrizeModalBtn = document.getElementById("savePrizeModal");
-  const remoteCountInput = document.getElementById("remoteCountInput");
-  const prizeInputs = Array.from(document.querySelectorAll("[data-prize-input]"));
+  const remoteCountSelect = document.getElementById("remoteCountSelect");
+  const totalPrizeCountSelect = document.getElementById("totalPrizeCountSelect");
+  const prizeInputsContainer = document.getElementById("prizeInputsContainer");
+  const prizeTextArea = document.getElementById("prizeText");
+  const importPrizeTextBtn = document.getElementById("importPrizeText");
+  const exportPrizeTextBtn = document.getElementById("exportPrizeText");
 
   let deck = [];
   let history = [];
   let isRevealing = false;
   let cardNumbers = [];
   let remoteCount = 0;
-  const prizeMap = {
-    A: "Aさん賞",
-    B: "Bさん賞",
-    C: "Cさん賞",
-    D: "Dさん賞",
-    E: "Eさん賞",
-    F: "Fさん賞",
-    G: "Gさん賞",
-  };
+  let totalPrizes = prizeButtons.length;
+  const PRIZE_KEYS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+  const prizeMap = PRIZE_KEYS.reduce((acc, key) => {
+    acc[key] = `${key}賞`;
+    return acc;
+  }, {});
 
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i -= 1) {
@@ -127,6 +128,8 @@
     if (openPrizeModalBtn) openPrizeModalBtn.addEventListener("click", showPrizeModal);
     if (closePrizeModalBtn) closePrizeModalBtn.addEventListener("click", hidePrizeModal);
     if (savePrizeModalBtn) savePrizeModalBtn.addEventListener("click", savePrizeSettings);
+    if (importPrizeTextBtn) importPrizeTextBtn.addEventListener("click", importPrizeText);
+    if (exportPrizeTextBtn) exportPrizeTextBtn.addEventListener("click", exportPrizeText);
   }
 
   function resetCards() {
@@ -251,6 +254,7 @@
     initDeck();
     setHostTimestamp();
     setPrizeLabels();
+    renderPrizeInputs();
   }
 
   init();
@@ -268,9 +272,21 @@
   }
 
   function revealPrize(button) {
-    if (button.classList.contains("revealed")) return;
+    if (button.classList.contains("prize-card--hidden")) return;
     const key = button.dataset.prize;
-    const text = prizeMap[key] || `${key}賞`;
+    const idx = prizeButtons.indexOf(button);
+    const isRemote = idx > -1 && idx < remoteCount;
+    const defaultLabel = `${key}${isRemote ? " ※" : ""}`;
+
+    if (button.classList.contains("revealed")) {
+      button.classList.remove("revealed");
+      button.classList.toggle("prize-card--remote", isRemote);
+      const inner = button.querySelector(".prize__inner");
+      if (inner) inner.textContent = defaultLabel;
+      return;
+    }
+
+    const text = `${prizeMap[key] || `${key}賞`}${isRemote ? " ※" : ""}`;
     button.classList.add("revealed");
     const inner = button.querySelector(".prize__inner");
     if (inner) inner.textContent = text;
@@ -280,23 +296,26 @@
     prizeButtons.forEach((btn, idx) => {
       const key = btn.dataset.prize;
       const inner = btn.querySelector(".prize__inner");
-      if (inner) inner.textContent = prizeMap[key] || `${key}賞`;
-      btn.classList.remove("prize-card--remote");
-      if (idx < remoteCount) {
-        btn.classList.add("prize-card--remote");
+      const isRemote = idx < remoteCount;
+      if (idx >= totalPrizes) {
+        btn.classList.add("prize-card--hidden");
+        btn.classList.remove("revealed", "prize-card--remote");
+        if (inner) inner.textContent = `${key}賞`;
+        return;
       }
+      btn.classList.remove("prize-card--hidden");
       btn.classList.remove("revealed");
+      btn.classList.toggle("prize-card--remote", isRemote);
+      if (inner) inner.textContent = `${key}${isRemote ? " ※" : ""}`;
     });
   }
 
   function showPrizeModal() {
     if (!prizeModal) return;
     prizeModal.classList.remove("hidden");
-    if (remoteCountInput) remoteCountInput.value = remoteCount;
-    prizeInputs.forEach((input) => {
-      const key = input.dataset.prizeInput;
-      if (key && prizeMap[key]) input.value = prizeMap[key];
-    });
+    if (remoteCountSelect) remoteCountSelect.value = remoteCount;
+    if (totalPrizeCountSelect) totalPrizeCountSelect.value = totalPrizes;
+    renderPrizeInputs();
   }
 
   function hidePrizeModal() {
@@ -305,9 +324,12 @@
   }
 
   function savePrizeSettings() {
-    const remoteVal = remoteCountInput ? Number(remoteCountInput.value) : 0;
-    remoteCount = Number.isInteger(remoteVal) ? Math.max(0, Math.min(remoteVal, prizeButtons.length)) : 0;
-    prizeInputs.forEach((input) => {
+    const remoteVal = remoteCountSelect ? Number(remoteCountSelect.value) : 0;
+    const totalVal = totalPrizeCountSelect ? Number(totalPrizeCountSelect.value) : prizeButtons.length;
+    totalPrizes = Number.isInteger(totalVal) ? Math.max(0, Math.min(totalVal, prizeButtons.length)) : prizeButtons.length;
+    remoteCount = Number.isInteger(remoteVal) ? Math.max(0, Math.min(remoteVal, totalPrizes)) : 0;
+    const inputs = prizeInputsContainer ? Array.from(prizeInputsContainer.querySelectorAll("[data-prize-input]")) : [];
+    inputs.forEach((input) => {
       const key = input.dataset.prizeInput;
       if (!key) return;
       const val = input.value.trim();
@@ -315,5 +337,65 @@
     });
     setPrizeLabels();
     hidePrizeModal();
+  }
+
+  function renderPrizeInputs() {
+    if (!prizeInputsContainer) return;
+    prizeInputsContainer.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    PRIZE_KEYS.slice(0, totalPrizes).forEach((key) => {
+      const label = document.createElement("label");
+      label.textContent = ` ${key}: `;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.dataset.prizeInput = key;
+      input.value = prizeMap[key] || `${key}賞`;
+      label.appendChild(input);
+      fragment.appendChild(label);
+    });
+    prizeInputsContainer.appendChild(fragment);
+  }
+
+  function exportPrizeText() {
+    if (!prizeTextArea) return;
+    const lines = [];
+    lines.push(`total=${totalPrizes}`);
+    lines.push(`remote=${remoteCount}`);
+    PRIZE_KEYS.slice(0, totalPrizes).forEach((key) => {
+      lines.push(`${key}:${prizeMap[key] || `${key}賞`}`);
+    });
+    prizeTextArea.value = lines.join("\n");
+  }
+
+  function importPrizeText() {
+    if (!prizeTextArea) return;
+    const text = prizeTextArea.value || "";
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    let newTotal = totalPrizes;
+    let newRemote = remoteCount;
+    const newMap = { ...prizeMap };
+    lines.forEach((line) => {
+      if (line.startsWith("total=")) {
+        const val = Number(line.split("=")[1]);
+        if (Number.isInteger(val)) newTotal = Math.max(0, Math.min(val, prizeButtons.length));
+      } else if (line.startsWith("remote=")) {
+        const val = Number(line.split("=")[1]);
+        if (Number.isInteger(val)) newRemote = Math.max(0, Math.min(val, prizeButtons.length));
+      } else {
+        const [keyRaw, ...rest] = line.split(":");
+        const key = keyRaw ? keyRaw.trim().toUpperCase() : "";
+        const val = rest.join(":").trim();
+        if (PRIZE_KEYS.includes(key) && val) {
+          newMap[key] = val;
+        }
+      }
+    });
+    totalPrizes = newTotal;
+    remoteCount = Math.min(newRemote, totalPrizes);
+    Object.assign(prizeMap, newMap);
+    if (remoteCountSelect) remoteCountSelect.value = remoteCount;
+    if (totalPrizeCountSelect) totalPrizeCountSelect.value = totalPrizes;
+    renderPrizeInputs();
+    setPrizeLabels();
   }
 })();
